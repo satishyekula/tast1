@@ -1,4 +1,4 @@
-name: Deploy NGINX on Self-Hosted Runner
+name: Self-Hosted Runner Workflow
 
 on:
   push:
@@ -6,23 +6,18 @@ on:
       - main
 
 jobs:
-  deploy-nginx:
-    runs-on: self-hosted  # Uses the self-hosted runner
+  build:
+    runs-on: self-hosted  # This runs on the self-hosted GitHub Runner
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Docker
-        run: |
-          sudo apt update
-          sudo apt install -y docker.io
-          sudo systemctl start docker
-          sudo systemctl enable docker
+      - name: Print Hostname
+        run: hostname
 
-      - name: Run NGINX container
-        run: |
-          docker pull nginx:latest
-          docker run -d --name nginx -p 80:80 nginx:latest
+      - name: List Files
+        run: ls -la
 
-      - name: Verify NGINX is running
-        run: docker ps
+      - name: Run a Sample Script
+        run: echo "Hello from Self-Hosted Runner!"
