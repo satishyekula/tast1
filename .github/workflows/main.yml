@@ -1,32 +1,28 @@
-name: CI Pipeline
+name: Deploy NGINX on Self-Hosted Runner
 
 on:
   push:
     branches:
       - main
-      
-jobs:
-  build:
-    runs-on: self-hosted
 
+jobs:
+  deploy-nginx:
+    runs-on: self-hosted  # Uses the self-hosted runner
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: 'npm'
+      - name: Set up Docker
+        run: |
+          sudo apt update
+          sudo apt install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Run NGINX container
+        run: |
+          docker pull nginx:latest
+          docker run -d --name nginx -p 80:80 nginx:latest
 
-      - name: Run lint
-        run: npm run lint
-
-      - name: Run tests
-        run: npm test
-
-      - name: Build application
-        run: npm run build
+      - name: Verify NGINX is running
+        run: docker ps
