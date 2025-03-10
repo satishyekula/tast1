@@ -1,13 +1,20 @@
-name: CI Pipeline
+name: Deploy Nginx on Self-Hosted Runner
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  build:
-    runs-on: self-hosted
+  deploy-nginx:
+    runs-on: self-hosted  # Uses the self-hosted runner
     steps:
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v4
-      
-      - name: Run a script
-        run: echo "Running on a self-hosted runner"
+
+      - name: Run Nginx Container
+        run: |
+          docker pull nginx:latest
+          docker stop my-nginx || true
+          docker rm my-nginx || true
+          docker run -d --name my-nginx -p 80:80 nginx:latest
