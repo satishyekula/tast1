@@ -1,0 +1,15 @@
+name: Self-Hosted Runner Workflow
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pull-request-job:
+    runs-on: self-hosted 
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref:${{github.head_ref}}
